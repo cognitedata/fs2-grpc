@@ -37,6 +37,28 @@ object ServerSuite extends SimpleTestSuite {
     assertEquals(dummy.currentStatus.get.isOk, true)
   }
 
+  test("single message to unaryToUnary with context propagation") {
+    implicit val ec: TestContext      = TestContext()
+    implicit val cs: ContextShift[IO] = IO.contextShift(ec)
+
+    val dummy    = new DummyServerCall
+    val listener = Fs2UnaryServerCallListener[IO](dummy, ServerCallOptions.default).unsafeRunSync()
+
+    val testKey = Context.key[Int]("test-key")
+    Context.current().withValue(testKey, 3123).run(() =>
+      listener.unsafeUnaryResponse(new Metadata(), _.map(_ => testKey.get()))
+    )
+    listener.onMessage("123")
+    listener.onHalfClose()
+
+    ec.tick()
+
+    assertEquals(dummy.messages.size, 1)
+    assertEquals(dummy.messages(0), 3123)
+    assertEquals(dummy.currentStatus.isDefined, true)
+    assertEquals(dummy.currentStatus.get.isOk, true)
+  }
+
   test("cancellation for unaryToUnary") {
 
     implicit val ec: TestContext      = TestContext()
