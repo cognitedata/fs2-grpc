@@ -1,14 +1,14 @@
-val artifactory = "https://cognite.jfrog.io/cognite/"
 import Dependencies._
 
+val artifactory = "https://cognite.jfrog.io/cognite/"
 inThisBuild(
   List(
     scalaVersion := "2.13.1",
     organization := "com.cognite.fs2-grpc",
     git.useGitDescribe := true,
-    //scmInfo := Some(ScmInfo(url("https://github.com/cognitedata/fs2-grpc"), "git@github.com:cognitedata/fs2-grpc.git")),
+    //scmInfo := Some(ScmInfo(url("https://github.com/fiadliel/fs2-grpc"), "git@github.com:fiadliel/fs2-grpc.git"))
     resolvers += "libs-release" at artifactory + "libs-release/",
-    version := "0.4.16"
+    version := "0.7.0"
   ))
 
 lazy val root = project
@@ -58,6 +58,12 @@ lazy val `sbt-java-gen` = project
     ),
     addSbtPlugin(sbtProtoc),
     libraryDependencies += scalaPbCompiler
+    publishTo := {
+      if (isSnapshot.value)
+        Some("snapshots" at artifactory + "libs-snapshot-local/")
+      else
+        Some("releases"  at artifactory + "libs-release-local/")
+    }
   )
 
 lazy val `java-runtime` = project
