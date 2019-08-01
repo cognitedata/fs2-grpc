@@ -162,7 +162,7 @@ object Fs2GrpcPlugin extends AutoPlugin {
       "io.grpc" % "grpc-core" % BuildInfo.grpcVersion,
       "io.grpc" % "grpc-stub" % BuildInfo.grpcVersion,
       "io.grpc" % "grpc-protobuf" % BuildInfo.grpcVersion,
-      BuildInfo.organization %% "java-runtime" % BuildInfo.version,
+      "com.cognite.fs2-grpc" %% "java-runtime" % BuildInfo.version,
       "com.thesamet.scalapb" %% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion,
       "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion
     )
