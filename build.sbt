@@ -1,17 +1,18 @@
+val artifactory = "https://cognite.jfrog.io/cognite/"
 inThisBuild(
   List(
-    organization := "org.lyranthe.fs2-grpc",
+    organization := "com.cognite.fs2-grpc",
     git.useGitDescribe := true,
-    scmInfo := Some(ScmInfo(url("https://github.com/fiadliel/fs2-grpc"), "git@github.com:fiadliel/fs2-grpc.git"))
+    //scmInfo := Some(ScmInfo(url("https://github.com/cognitedata/fs2-grpc"), "git@github.com:cognitedata/fs2-grpc.git")),
+    resolvers += "libs-release" at artifactory + "libs-release/",
+    version := "0.4.15"
   ))
 
 lazy val root = project.in(file("."))
-  .enablePlugins(GitVersioning, BuildInfoPlugin)
+  .enablePlugins(BuildInfoPlugin)
   .settings(
-    sonatypeProfileName := "org.lyranthe",
     skip in publish := true,
     pomExtra in Global := {
-      <url>https://github.com/fiadliel/fs2-grpc</url>
         <licenses>
           <license>
             <name>MIT</name>
@@ -30,22 +31,26 @@ lazy val root = project.in(file("."))
   .aggregate(`sbt-java-gen`, `java-runtime`)
 
 lazy val `sbt-java-gen` = project
-  .enablePlugins(GitVersioning, BuildInfoPlugin)
+  .enablePlugins(BuildInfoPlugin)
   .settings(
-    publishTo := sonatypePublishTo.value,
     sbtPlugin := true,
+    publishMavenStyle := true,
     crossSbtVersions := List(sbtVersion.value, "0.13.18"),
     buildInfoPackage := "org.lyranthe.fs2_grpc.buildinfo",
     addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.23"),
-    libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % scalapb.compiler.Version.scalapbVersion
+    libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % scalapb.compiler.Version.scalapbVersion,
+    publishTo := {
+      if (isSnapshot.value)
+        Some("snapshots" at artifactory + "libs-snapshot-local/")
+      else
+        Some("releases"  at artifactory + "libs-release-local/")
+    }
   )
 
 lazy val `java-runtime` = project
-  .enablePlugins(GitVersioning)
   .settings(
     scalaVersion := "2.12.8",
     crossScalaVersions := List(scalaVersion.value, "2.11.12", "2.13.0-M5"),
-    publishTo := sonatypePublishTo.value,
     libraryDependencies ++= List(
       "co.fs2"        %% "fs2-core"         % "1.0.4",
       "org.typelevel" %% "cats-effect"      % "1.3.1",
@@ -56,5 +61,11 @@ lazy val `java-runtime` = project
     ),
     mimaPreviousArtifacts := Set(organization.value %% name.value % "0.3.0"),
     testFrameworks += new TestFramework("minitest.runner.Framework"),
-    addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.9" cross CrossVersion.binary)
+    addCompilerPlugin("org.spire-math" % "kind-projector" % "0.9.9" cross CrossVersion.binary),
+    publishTo := {
+      if (isSnapshot.value)
+        Some("snapshots" at artifactory + "libs-snapshot-local/")
+      else
+        Some("releases"  at artifactory + "libs-release-local/")
+    }
   )
