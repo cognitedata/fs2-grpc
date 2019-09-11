@@ -38,7 +38,7 @@ lazy val `sbt-java-gen` = project
   .settings(
     sbtPlugin := true,
     publishMavenStyle := true,
-    crossSbtVersions := List(sbtVersion.value, "0.13.18"),
+    crossSbtVersions := List(sbtVersion.value),
     buildInfoPackage := "org.lyranthe.fs2_grpc.buildinfo",
     publishTo := {
       if (isSnapshot.value)
