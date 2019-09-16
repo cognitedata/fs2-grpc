@@ -54,7 +54,7 @@ lazy val `java-runtime` = project
   .settings(
     scalaVersion := "2.13.0",
     crossScalaVersions := List(scalaVersion.value, "2.12.9", "2.11.12"),
-    publishTo := sonatypePublishTo.value,
+    publishTo := sonatypePublishToBundle.value,
     libraryDependencies ++= List(fs2, catsEffect, grpcCore) ++ List(grpcNetty, catsEffectLaws, minitest).map(_  % Test),
     mimaPreviousArtifacts := Set(organization.value %% name.value % "0.3.0"),
     Test / parallelExecution := false,
