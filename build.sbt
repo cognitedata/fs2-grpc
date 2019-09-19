@@ -5,7 +5,7 @@ inThisBuild(
     git.useGitDescribe := true,
     //scmInfo := Some(ScmInfo(url("https://github.com/cognitedata/fs2-grpc"), "git@github.com:cognitedata/fs2-grpc.git")),
     resolvers += "libs-release" at artifactory + "libs-release/",
-    version := "0.4.15"
+    version := "0.4.16"
   ))
 
 lazy val root = project.in(file("."))
