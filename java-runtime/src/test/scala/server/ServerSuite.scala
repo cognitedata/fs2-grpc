@@ -19,10 +19,10 @@ object ServerSuite extends SimpleTestSuite {
 
   private[this] def singleUnaryToUnary(options: ServerCallOptions = ServerCallOptions.default): Unit = {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2UnaryServerCallListener[IO](dummy, options).unsafeRunSync()
 
     listener.unsafeUnaryResponse(new Metadata(), _.map(_.length))
@@ -61,10 +61,10 @@ object ServerSuite extends SimpleTestSuite {
 
   test("cancellation for unaryToUnary") {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2UnaryServerCallListener[IO](dummy).unsafeRunSync()
 
     listener.unsafeUnaryResponse(new Metadata(), _.map(_.length))
@@ -83,10 +83,10 @@ object ServerSuite extends SimpleTestSuite {
 
   private[this] def multipleUnaryToUnary(options: ServerCallOptions = ServerCallOptions.default): Unit = {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2UnaryServerCallListener[IO](dummy, options).unsafeRunSync()
 
     listener.unsafeUnaryResponse(new Metadata(), _.map(_.length))
@@ -121,10 +121,10 @@ object ServerSuite extends SimpleTestSuite {
 
   private[this] def singleUnaryToStreaming(options: ServerCallOptions = ServerCallOptions.default): Unit = {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2UnaryServerCallListener[IO].apply[String, Int](dummy, options).unsafeRunSync()
 
     listener.unsafeStreamResponse(new Metadata(), s => Stream.eval(s).map(_.length).repeat.take(5))
@@ -141,10 +141,10 @@ object ServerSuite extends SimpleTestSuite {
 
   test("zero messages to streamingToStreaming") {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2StreamServerCallListener[IO].apply[String, Int](dummy).unsafeRunSync()
 
     listener.unsafeStreamResponse(new Metadata(), _ => Stream.emit(3).repeat.take(5))
@@ -160,11 +160,10 @@ object ServerSuite extends SimpleTestSuite {
 
   test("cancellation for streamingToStreaming") {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2StreamServerCallListener[IO].apply[String, Int](dummy).unsafeRunSync()
 
     listener.unsafeStreamResponse(new Metadata(), _ => Stream.emit(3).repeat.take(5))
@@ -184,10 +183,10 @@ object ServerSuite extends SimpleTestSuite {
 
   private[this] def multipleStreamingToStreaming(options: ServerCallOptions = ServerCallOptions.default): Unit = {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2StreamServerCallListener[IO].apply[String, Int](dummy, options).unsafeRunSync()
 
     listener.unsafeStreamResponse(new Metadata(), _.map(_.length).intersperse(0))
@@ -205,15 +204,16 @@ object ServerSuite extends SimpleTestSuite {
 
   test("messages to streamingToStreaming") {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2StreamServerCallListener[IO].apply[String, Int](dummy).unsafeRunSync()
 
     listener.unsafeStreamResponse(
       new Metadata(),
-      _.map(_.length) ++ Stream.emit(0) ++ Stream.raiseError[IO](new RuntimeException("hello")))
+      _.map(_.length) ++ Stream.emit(0) ++ Stream.raiseError[IO](new RuntimeException("hello"))
+    )
     listener.onMessage("a")
     listener.onMessage("ab")
     listener.onHalfClose()
@@ -233,13 +233,13 @@ object ServerSuite extends SimpleTestSuite {
 
   private[this] def streamingToUnary(options: ServerCallOptions = ServerCallOptions.default): Unit = {
 
-    implicit val ec: TestContext      = TestContext()
+    implicit val ec: TestContext = TestContext()
     implicit val cs: ContextShift[IO] = IO.contextShift(ec)
 
     val implementation: Stream[IO, String] => IO[Int] =
       _.compile.foldMonoid.map(_.length)
 
-    val dummy    = new DummyServerCall
+    val dummy = new DummyServerCall
     val listener = Fs2StreamServerCallListener[IO].apply[String, Int](dummy, options).unsafeRunSync()
 
     listener.unsafeUnaryResponse(new Metadata(), implementation)
