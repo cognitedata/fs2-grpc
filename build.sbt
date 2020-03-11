@@ -11,8 +11,9 @@ inThisBuild(
     version := "0.4.16"
   ))
 
-lazy val root = project.in(file("."))
-  .enablePlugins(BuildInfoPlugin)
+lazy val root = project
+  .in(file("."))
+  .enablePlugins(GitVersioning, BuildInfoPlugin)
   .settings(
     skip in publish := true,
     pomExtra in Global := {
@@ -47,6 +48,14 @@ lazy val `sbt-java-gen` = project
       else
         Some("releases"  at artifactory + "libs-release-local/")
     },
+    buildInfoKeys := Seq[BuildInfoKey](
+      name,
+      version,
+      scalaVersion,
+      sbtVersion,
+      organization,
+      "grpcVersion" -> versions.grpc
+    ),
     addSbtPlugin(sbtProtoc),
     libraryDependencies += scalaPbCompiler
   )
@@ -56,7 +65,7 @@ lazy val `java-runtime` = project
     scalaVersion := "2.13.1",
     crossScalaVersions := List(scalaVersion.value, "2.12.10"),
     publishTo := sonatypePublishToBundle.value,
-    libraryDependencies ++= List(fs2, catsEffect, grpcCore) ++ List(grpcNetty, catsEffectLaws, minitest).map(_  % Test),
+    libraryDependencies ++= List(fs2, catsEffect, grpcApi) ++ List(grpcNetty, catsEffectLaws, minitest).map(_ % Test),
     mimaPreviousArtifacts := Set(organization.value %% name.value % "0.3.0"),
     Test / parallelExecution := false,
     testFrameworks += new TestFramework("minitest.runner.Framework"),
