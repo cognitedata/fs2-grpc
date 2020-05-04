@@ -9,7 +9,7 @@ inThisBuild(
     git.useGitDescribe := true,
     //scmInfo := Some(ScmInfo(url("https://github.com/fiadliel/fs2-grpc"), "git@github.com:fiadliel/fs2-grpc.git"))
     resolvers += "libs-release" at artifactory + "libs-release/",
-    version := "0.7.0"
+    version := "0.7.0-cognite"
   )
 )
 
