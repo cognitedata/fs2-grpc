@@ -9,7 +9,7 @@ inThisBuild(
     git.useGitDescribe := true,
     //scmInfo := Some(ScmInfo(url("https://github.com/fiadliel/fs2-grpc"), "git@github.com:fiadliel/fs2-grpc.git"))
     resolvers += "libs-release" at artifactory + "libs-release/",
-    version := "0.7.0"
+    version := "0.7.0-cognite"
   )
 )
 
@@ -55,17 +55,14 @@ lazy val `sbt-java-gen` = project
     addSbtPlugin(sbtProtoc),
     libraryDependencies += scalaPbCompiler,
     publishTo := {
-      if (isSnapshot.value)
-        Some("snapshots" at artifactory + "libs-snapshot-local/")
-      else
-        Some("releases"  at artifactory + "libs-release-local/")
+      Some("releases"  at artifactory + "libs-release-local/")
     }
   )
 
 lazy val `java-runtime` = project
   .settings(
     scalaVersion := "2.13.1",
-    publishMavenStyle := false,
+    publishMavenStyle := true,
     crossScalaVersions := List(scalaVersion.value, "2.12.10"),
     libraryDependencies ++= List(fs2, catsEffect, grpcApi) ++ List(grpcNetty, catsEffectLaws, minitest).map(_ % Test),
     mimaPreviousArtifacts := Set(organization.value %% name.value % "0.3.0"),
@@ -73,9 +70,6 @@ lazy val `java-runtime` = project
     testFrameworks += new TestFramework("minitest.runner.Framework"),
     addCompilerPlugin(kindProjector),
     publishTo := {
-      if (isSnapshot.value)
-        Some("snapshots" at artifactory + "libs-snapshot-local/")
-      else
-        Some("releases"  at artifactory + "libs-release-local/")
+      Some("releases"  at artifactory + "libs-release-local/")
     }
   )
